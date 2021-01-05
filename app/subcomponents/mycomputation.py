@@ -129,6 +129,7 @@ class MyComputation(IstanbulComputation):
                         logger.info("Revert has been processed")
                         cls.abort = True
                         raise Halt
+                        pass
                     elif opcode == SSTORE:
                         cls.set_storage.emit(message.storage_address, slot, value)
                         if cls.debug_mode:
@@ -195,11 +196,14 @@ class MyComputation(IstanbulComputation):
         elif next_opcode == SHA3 or (LOG0 <= next_opcode <= LOG4) \
                 or next_opcode == RETURN or next_opcode == REVERT:
             arr = get_stack_content(stack, 2)
+            print(arr)
+
             offset = arr[0]
             length = arr[1]
             chain.add_link(ChangeChainLink(TableWidgetEnum.MEMORY,
                                            list(range(int(int(offset, 16) / 32), int(int(length, 16) / 32) + 1)), [])
                            )
+
         elif next_opcode == CALLDATACOPY or next_opcode == CODECOPY \
                 or next_opcode == RETURNDATACOPY:
             arr = get_stack_content(stack, 3)
@@ -218,6 +222,7 @@ class MyComputation(IstanbulComputation):
                            )
         elif next_opcode == CREATE or next_opcode == CREATE2:
             arr = get_stack_content(stack, 3)
+            print(f"CREATE {arr}")
             offset = arr[1]
             length = arr[2]
             chain.add_link(ChangeChainLink(TableWidgetEnum.MEMORY,
@@ -225,6 +230,7 @@ class MyComputation(IstanbulComputation):
                            )
         elif next_opcode == CALL or next_opcode == CALLCODE:
             arr = get_stack_content(stack, 7)
+            print(f"CALL {arr}")
             argoffset = arr[3]
             arglength = arr[4]
             retOffset = arr[5]
@@ -236,6 +242,7 @@ class MyComputation(IstanbulComputation):
             )
         elif next_opcode == DELEGATECALL or next_opcode == STATICCALL:
             arr = get_stack_content(stack, 6)
+            print(f"DELEGATECALL {arr}")
             argoffset = arr[2]
             arglength = arr[3]
             retOffset = arr[4]
